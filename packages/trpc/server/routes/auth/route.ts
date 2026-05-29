@@ -2,6 +2,7 @@ import {publicProcedure, router} from '../../trpc'
 import { generatePath } from '../../utils/path-generator'
 import { createUserWithEmailAndPasswordInput, createUserWithEmailPassWordOutput, loginUserWithEmailAndPassWordInput, loginUserWithEmailAndPassWordOutput } from './model';
 import { userService } from '../../services';
+import { setAuthTokenCookie } from '../../utils/cookie';
 
 const TAGS = ["Authentication"];
 const getPath = generatePath("/auth");
@@ -16,17 +17,20 @@ export const authRouter = router({
     }
   })
   .input(createUserWithEmailAndPasswordInput).output(createUserWithEmailPassWordOutput)
-  .mutation(async ({input}) => {
+  .mutation(async ({input, ctx}) => {
     const {fullName, email, password} = input;
 
-    const {id} = await userService.createUserWithEmailAndPassword({
+    const {id, token} = await userService.createUserWithEmailAndPassword({
       fullName,
       email,
       password
     })
 
+    setAuthTokenCookie(ctx, token)
+
     return {
-      id
+      id,
+      token
     }
 
   }),
@@ -39,16 +43,19 @@ export const authRouter = router({
     }
   })
   .input(loginUserWithEmailAndPassWordInput).output(loginUserWithEmailAndPassWordOutput)
-  .mutation(async({input}) => {
+  .mutation(async({input, ctx}) => {
     const {email, password} = input;
 
-    const {id} = await userService.loginUserWithEmailAndPassword({
+    const {id, token} = await userService.loginUserWithEmailAndPassword({
       email,
       password
     })
 
+    setAuthTokenCookie(ctx, token)
+
     return{
-      id
+      id,
+      token
     }
   })
 })

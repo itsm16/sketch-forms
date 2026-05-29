@@ -2,15 +2,17 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import "wired-elements";
-import { TableFooterExample } from "~/components/Table";
 import { generateRandomString } from "~/lib/utils";
 import { toast } from "sonner";
+import { FormsTable } from "~/components/Table";
 
 export default function Page() {
   const router = useRouter();
   const [title, setTitle] = React.useState("");
+  const [expirationDate, setExpirationDate] = React.useState("");
+  const [noExpiration, setNoExpiration] = React.useState(false);
   const handleClick = () => {
-    if(!title) {
+    if (!title) {
       toast("Please enter a title for the form", {
         position: "top-right",
       });
@@ -21,28 +23,36 @@ export default function Page() {
   }
 
   return (
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0 max-h-[90vh] bg-muted/50 rounded-xl">
-          <div className="flex flex-col min-h-[40%] max-h-[40%] pt-5">
-            <label className="flex flex-col text-2xl">
-              Form Title
-              <wired-input
-                className="h-[45px] py-1 px-1 pl-2 w-[450px]"
-                value={title}
-                placeholder="Enter title"
-                onChange={(e: any) => setTitle(e.target.value)}
-              />
-            </label>
-            <wired-button
-              onClick={handleClick}
-              elevation={2}
-              className="mt-5 w-fit text-lg"
-            >
-              Create
-            </wired-button>
-          </div>
-          <wired-card className="max-h-[60%] min-h-[60%] overflow-y-auto rounded-xl p-3">
-            <TableFooterExample/>
-          </wired-card>
-        </div>
+    <div className="flex flex-1 flex-col gap-2 rounded-xl bg-muted/50 p-4">
+      <div className="flex flex-col min-h-[40%] max-h-[40%]">
+        <label className="flex flex-col text-xl">
+          Form Title
+          <wired-input
+            className="h-[40px] py-1 px-1 pl-2 w-[450px]"
+            value={title}
+            placeholder="Enter title"
+            onChange={(e: any) => setTitle(e.target.value)}
+          />
+        </label>
+        <wired-calendar selected="Jul 4, 2025">
+        </wired-calendar>
+        <wired-checkbox
+          style={{ marginTop: "6px" }}
+          checked={noExpiration}
+        >
+          No expiration date
+        </wired-checkbox>
+        <wired-button
+          onClick={handleClick}
+          elevation={2}
+          className="mt-5 w-fit text-md"
+        >
+          Create
+        </wired-button>
+      </div>
+      <wired-card className="max-h-[60%] min-h-[60%] overflow-y-auto rounded-xl p-3">
+        <FormsTable />
+      </wired-card>
+    </div>
   )
 }

@@ -5,7 +5,7 @@ import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { Label } from "~/components/ui/label";
 import React from "react";
-import { useAuth } from "~/lib/utils";
+import { useAuth } from "~/hooks/authHooks";
 
 export default function SignUpPage() {
     

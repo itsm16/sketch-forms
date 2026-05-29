@@ -106,6 +106,19 @@ declare global {
           },
           HTMLElement
         >;
+
+        "wired-calendar": React.DetailedHTMLProps<
+          React.HTMLAttributes<HTMLElement> & {
+            elevation?: number;
+            selected?: string;
+            firstdate?: string;
+            lastdate?: string;
+            locale?: string;
+            disabled?: boolean;
+            initials?: boolean;
+          },
+          HTMLElement
+        >;
       }
     }
   }

@@ -17,6 +17,7 @@ import {
   SidebarTrigger,
 } from "~/components/ui/sidebar"
 import { Toaster } from "~/components/ui/sonner"
+import Loader from "~/components/loader"
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     const path = usePathname()
@@ -37,8 +38,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </Breadcrumb>
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+        <div className="relative flex flex-1 flex-col gap-4 p-4 pt-0">
           {children}
+          <Toaster />
+          <Loader />
         </div>
       </SidebarInset>
     </SidebarProvider>

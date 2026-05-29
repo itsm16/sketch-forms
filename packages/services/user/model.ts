@@ -11,15 +11,22 @@ const LoginUserWithEmailAndPasswordInput = z.object({
     password: z.string().min(8).max(30).describe("User's password"),
 });
 
+const UserToken = z.object({
+    id: z.string(),
+});
+
 type CreateUserWithEmailAndPasswordInputType = z.infer<typeof CreateUserWithEmailAndPasswordInput>;
 type LoginUserWithEmailAndPasswordInputType = z.infer<typeof LoginUserWithEmailAndPasswordInput>;
+type UserTokenType = z.infer<typeof UserToken>;
 
 export type { 
     CreateUserWithEmailAndPasswordInputType,
-    LoginUserWithEmailAndPasswordInputType
+    LoginUserWithEmailAndPasswordInputType,
+    UserTokenType
 };
 
 export { 
     CreateUserWithEmailAndPasswordInput,
-    LoginUserWithEmailAndPasswordInput 
+    LoginUserWithEmailAndPasswordInput,
+    UserToken
 };

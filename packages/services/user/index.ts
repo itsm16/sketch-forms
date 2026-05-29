@@ -1,7 +1,9 @@
-import { type CreateUserWithEmailAndPasswordInputType, CreateUserWithEmailAndPasswordInput, LoginUserWithEmailAndPasswordInputType } from "./model";
+import { type CreateUserWithEmailAndPasswordInputType, CreateUserWithEmailAndPasswordInput, LoginUserWithEmailAndPasswordInputType, UserToken, UserTokenType } from "./model";
 import { db, eq } from "@repo/database";
 import { usersTable } from "@repo/database/schema";
+import JWT from "jsonwebtoken";
 import crypto from 'node:crypto'
+import { env } from "../env";
 
 class UserService {
 
@@ -11,6 +13,12 @@ class UserService {
             return null;
         }
         return user;
+    }
+
+    private async generateUserToken(payload: UserTokenType){
+        const {id} = await UserToken.parseAsync(payload)
+        const token = JWT.sign({id}, env.JWT_SECRET!, {expiresIn: "1d"})
+        return {token};
     }
 
     public async createUserWithEmailAndPassword(payload: CreateUserWithEmailAndPasswordInputType) {
@@ -38,8 +46,11 @@ class UserService {
             throw new Error("Something went wrong while creating the user");
         }
 
+        const {token} = await this.generateUserToken({id: userInsertResult.id})
+
         return {
             id: userInsertResult.id,
+            token
         };
     }
 
@@ -57,8 +68,11 @@ class UserService {
             throw new Error("password doensn't match")
         }
 
+        const {token} = await this.generateUserToken({id: existingUser.id})
+        
         return {
-            id: existingUser.id
+            id: existingUser.id,
+            token
         }
     }
 }

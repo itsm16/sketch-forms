@@ -12,7 +12,7 @@ export const createTRPCHttpBatchClientClient = (opts?: CreateTRPCHttpBatchClient
     fetch(input, options) {
       return fetch(input, {
         ...options,
-        // credentials: "include", // comment this out if you don't want cookies to be sent with requests
+        credentials: "include", // comment this out if you don't want cookies to be sent with requests
         // if not commenting out , not using cookies also, this gives CORS error
       });
     },
