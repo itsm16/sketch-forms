@@ -5,15 +5,22 @@ import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { Label } from "~/components/ui/label";
 import React from "react";
-import { useAuth } from "~/hooks/authHooks";
+import { useAuth } from "~/hooks/auth-hooks";
+import { Link } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useUserStore } from "~/store/user-store";
 
 export default function SignInPage() {
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
     const { loginUserWithEmailAndPassword } = useAuth();
+    const router = useRouter();
+    const {setUser} = useUserStore();
 
     const handleSubmit = async () => {
-        await loginUserWithEmailAndPassword(email, password);
+        const id = await loginUserWithEmailAndPassword(email, password);
+        setUser({id, email: null, name: null});
+        router.push("/new");
     }
 
     return (
@@ -45,6 +52,9 @@ export default function SignInPage() {
                         >
                             Sign In
                         </Button>
+                    </CardFooter>
+                    <CardFooter className="text-sm">
+                        Don't have an account? <Link href="/sign-up" style={{color: "#0065F4", marginLeft: "0.5rem"}} className=" text-lg hover:underline">Sign up</Link>
                     </CardFooter>
                 </Card>
         </main>

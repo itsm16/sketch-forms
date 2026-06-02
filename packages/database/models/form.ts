@@ -20,24 +20,22 @@ export const formsTable = pgTable("forms", {
     }),
 
   title: varchar("title", { length: 40 }).notNull(),
-
+  tagline: varchar("tagline", { length: 100 }),
   canvasJson: jsonb("canvas_json").notNull(),
 
-  // parsedSchema: jsonb("parsed_schema"),
-
-  isLive: boolean("is_live")
-    .default(false)
-    .notNull(),
+  // isLive: boolean("is_live")
+  //   .default(false)
+  //   .notNull(),
 
   // unlisted: boolean("unlisted")
   //   .default(false)
   //   .notNull(),
 
-  expiresAt: timestamp("expires_at"),
+  // expiresAt: timestamp("expires_at"),
   
   createdAt: timestamp("created_at").defaultNow(),
 
-  updatedAt: timestamp("updated_at").$onUpdate(
-    () => new Date()
-  ),
+  updatedAt: timestamp("updated_at")
+  .defaultNow()
+  .$onUpdate(() => new Date()),
 });

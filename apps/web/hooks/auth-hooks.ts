@@ -12,8 +12,14 @@ export const useAuth = () => {
     return id;
   }
 
+  // const getMe = async (token: string)=>{
+  //   const {id, fullName, email} = await api.auth.GetMe.query({ token });
+  //   return {id, fullName, email};
+  // }
+
   return {
     createUserWithEmailAndPassword,
     loginUserWithEmailAndPassword,
+    // getMe
   }
 }

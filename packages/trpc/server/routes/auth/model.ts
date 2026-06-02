@@ -19,9 +19,21 @@ const loginUserWithEmailAndPassWordOutput = z.object({
     id: z.string().describe("id of user created")
 })
 
+const getMeInput = z.object({
+    token: z.string().describe("user's token")
+})
+
+const getMeOutput = z.object({
+    id: z.string().describe("user's id"),
+    fullName: z.string().describe("user's full name"),
+    email: z.string().describe("user's email")
+})
+
 export{
     createUserWithEmailAndPasswordInput,
     createUserWithEmailPassWordOutput,
     loginUserWithEmailAndPassWordInput,
-    loginUserWithEmailAndPassWordOutput
+    loginUserWithEmailAndPassWordOutput,
+    getMeInput,
+    getMeOutput
 }

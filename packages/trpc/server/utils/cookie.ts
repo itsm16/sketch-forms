@@ -33,7 +33,7 @@ const clearCookieFactory = (res: Response) => {
     }
 };
 
-const AUTHENTICATION_COOKIE_NAME = "auth-token";
+export const AUTHENTICATION_COOKIE_NAME = "auth-token";
 const setAuthTokenCookie = (ctx: TRPCContext, token: string) => {
     ctx.createCookie(AUTHENTICATION_COOKIE_NAME, token);
 };

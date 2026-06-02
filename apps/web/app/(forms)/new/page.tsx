@@ -2,7 +2,6 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import "wired-elements";
-import { generateRandomString } from "~/lib/utils";
 import { toast } from "sonner";
 import { FormsTable } from "~/components/Table";
 
@@ -18,8 +17,7 @@ export default function Page() {
       });
       return;
     }
-    const randomString = generateRandomString()
-    router.push(`/form/${title}-${randomString}`);
+    router.push(`/form/${title}`);
   }
 
   return (

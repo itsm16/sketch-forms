@@ -1,8 +1,10 @@
 import {publicProcedure, router} from '../../trpc'
 import { generatePath } from '../../utils/path-generator'
-import { createUserWithEmailAndPasswordInput, createUserWithEmailPassWordOutput, loginUserWithEmailAndPassWordInput, loginUserWithEmailAndPassWordOutput } from './model';
+import { createUserWithEmailAndPasswordInput, createUserWithEmailPassWordOutput, getMeInput, getMeOutput, loginUserWithEmailAndPassWordInput, loginUserWithEmailAndPassWordOutput } from './model';
 import { userService } from '../../services';
-import { setAuthTokenCookie } from '../../utils/cookie';
+import { getAuthTokenCookie, setAuthTokenCookie } from '../../utils/cookie';
+import z from 'zod';
+import { setAuthUser } from '../../utils/auth-middleware';
 
 const TAGS = ["Authentication"];
 const getPath = generatePath("/auth");
@@ -57,5 +59,22 @@ export const authRouter = router({
       id,
       token
     }
+  }),
+  GetMe: publicProcedure
+  .meta({
+    openapi:{
+      method: "GET",
+      path: getPath("/getMe"),
+      tags: TAGS
+    }
+  })
+  .output(getMeOutput)
+  .query(async({ctx}) => {
+    const token = getAuthTokenCookie(ctx);
+    const user = await userService.getMe(token);
+    
+    setAuthUser(ctx, user);
+    
+    return user;
   })
 })

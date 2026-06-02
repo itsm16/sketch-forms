@@ -15,6 +15,22 @@ class UserService {
         return user;
     }
 
+    private async verifyUserToken(token: string) {
+        const {id} = JWT.verify(token, env.JWT_SECRET!) as { id: string };
+        if (!id) {
+            return null;
+        }
+        return {id};
+    }
+
+    private async getUserById(id: string) {
+        const [user] = await db.select().from(usersTable).where(eq(usersTable.id, id));
+        if (!user) {
+            return null;
+        }
+        return user;
+    }
+
     private async generateUserToken(payload: UserTokenType){
         const {id} = await UserToken.parseAsync(payload)
         const token = JWT.sign({id}, env.JWT_SECRET!, {expiresIn: "1d"})
@@ -74,6 +90,21 @@ class UserService {
             id: existingUser.id,
             token
         }
+    }
+
+    public async getMe(token: string){
+
+        const verifiedUser = await this.verifyUserToken(token);
+        if(!verifiedUser){
+            throw new Error("User not found");
+        }
+
+        const user = await this.getUserById(verifiedUser.id);
+        if (!user) {
+            throw new Error("User not found");
+        }
+        const {id, fullName, email} = user;
+        return {id, fullName, email};
     }
 }
 

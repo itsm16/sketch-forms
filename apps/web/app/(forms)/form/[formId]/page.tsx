@@ -56,12 +56,12 @@ const Page = () => {
               </label>
               <wired-toggle checked={false}></wired-toggle>
             </div>
-            <div className="flex gap-2 items-center">
+            {/* <div className="flex gap-2 items-center">
               <label htmlFor="unlisted-mode">
                 Unlisted
               </label>
               <wired-toggle checked={false}></wired-toggle>
-            </div>
+            </div> */}
           </div>
         </div>
 

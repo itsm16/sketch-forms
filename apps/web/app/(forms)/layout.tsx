@@ -16,12 +16,39 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "~/components/ui/sidebar"
-import { Toaster } from "~/components/ui/sonner"
 import Loader from "~/components/loader"
+import { useAuth } from "~/hooks/auth-hooks"
+import { useUserStore } from "~/store/user-store"
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
+import useLoaderStore from "~/store/loaderStore"
+import { toast } from "sonner"
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     const path = usePathname()
     const paths = path.split("/").filter(Boolean)
+    const router = useRouter()
+    // const {user, setUser} = useUserStore();
+    // const {show, hide} = useLoaderStore();
+    // console.log("u", user);
+    // const { getMe } = useAuth();
+
+    // useEffect(()=>{
+    //   show("Loading...")
+    //   if(!user?.id) {
+    //     toast.info("Login required", {position: "top-right"})
+    //     router.push("/sign-in");
+    //     return;
+    //   }
+
+    //   const fetchUser = async () => {
+    //     // const {id, fullName, email} = await getMe(user?.id as string)
+    //     setUser({id, name: fullName, email})
+    //     hide()
+    //   }
+    //   fetchUser()
+    // }, [user?.id])
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -40,7 +67,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </header>
         <div className="relative flex flex-1 flex-col gap-4 p-4 pt-0">
           {children}
-          <Toaster />
           <Loader />
         </div>
       </SidebarInset>

@@ -1,8 +1,8 @@
-
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { GlobalProviders } from "~/providers/global";
+import { Toaster } from "~/components/ui/sonner";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -28,11 +28,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <html lang="en" className="dark">
       <body className={virgil.className}>
         <GlobalProviders>{children}</GlobalProviders>
       </body>
+      <Toaster />
     </html>
   );
 }
