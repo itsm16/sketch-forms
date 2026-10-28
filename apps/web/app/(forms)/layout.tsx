@@ -1,53 +1,62 @@
-"use client"
+"use client";
 
-import { usePathname } from "next/navigation"
-import { AppSidebar } from "~/components/app-sidebar"
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "~/components/ui/breadcrumb"
-import { Separator } from "~/components/ui/separator"
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { toast } from "sonner";
+
+import { AppSidebar } from "~/components/app-sidebar";
+import Loader from "~/components/loader";
+import { Separator } from "~/components/ui/separator";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from "~/components/ui/sidebar"
-import Loader from "~/components/loader"
-import { useAuth } from "~/hooks/auth-hooks"
-import { useUserStore } from "~/store/user-store"
-import { useEffect } from "react"
-import { useRouter } from "next/navigation"
-import useLoaderStore from "~/store/loaderStore"
-import { toast } from "sonner"
+} from "~/components/ui/sidebar";
+import { useWiredElements } from "~/hooks/use-wired-elements";
+import { useUserStore } from "~/store/user-store";
+import { trpc } from "~/trpc/client";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-    const path = usePathname()
-    const paths = path.split("/").filter(Boolean)
-    const router = useRouter()
-    // const {user, setUser} = useUserStore();
-    // const {show, hide} = useLoaderStore();
-    // console.log("u", user);
-    // const { getMe } = useAuth();
+  useWiredElements();
+  const path = usePathname();
+  const paths = path.split("/").filter(Boolean);
+  const router = useRouter();
+  const setUser = useUserStore((state) => state.setUser);
 
-    // useEffect(()=>{
-    //   show("Loading...")
-    //   if(!user?.id) {
-    //     toast.info("Login required", {position: "top-right"})
-    //     router.push("/sign-in");
-    //     return;
-    //   }
+  const me = trpc.auth.GetMe.useQuery(undefined, {
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
 
-    //   const fetchUser = async () => {
-    //     // const {id, fullName, email} = await getMe(user?.id as string)
-    //     setUser({id, name: fullName, email})
-    //     hide()
-    //   }
-    //   fetchUser()
-    // }, [user?.id])
+  useEffect(() => {
+    if (!me.data) return;
+
+    setUser({
+      id: me.data.id,
+      name: me.data.fullName,
+      email: me.data.email,
+    });
+  }, [me.data, setUser]);
+
+  useEffect(() => {
+    if (!me.error) return;
+
+    toast.error(me.error.message, { position: "top-right" });
+    router.replace("/sign-in");
+  }, [me.error, router]);
+
+  if (me.isLoading || me.isError) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-3 text-muted-foreground">
+          <wired-spinner spinning duration={1000}></wired-spinner>
+          <p className="text-sm">
+            {me.isError ? "Redirecting to sign in..." : "Loading your workspace..."}
+          </p>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <SidebarProvider>
@@ -60,9 +69,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               orientation="vertical"
               className="mr-2 data-[orientation=vertical]:h-4"
             />
-            <div>{paths && paths[0] ? paths[0] : "New"}</div>
-            <Breadcrumb>
-            </Breadcrumb>
+            <div className="capitalize">
+              {paths && paths[0] ? paths[0].replace("-", " ") : "New"}
+            </div>
           </div>
         </header>
         <div className="relative flex flex-1 flex-col gap-4 p-4 pt-0">
@@ -71,5 +80,5 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </div>
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }

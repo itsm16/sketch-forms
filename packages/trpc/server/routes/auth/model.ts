@@ -1,39 +1,44 @@
-import z, { email } from "zod";
+import z from "zod";
 
 const createUserWithEmailAndPasswordInput = z.object({
-    fullName: z.string({error: "name is required"}).describe("user's name"),
-    email: z.email({error: "email is required"}).describe("user's email"),
-    password: z.string({error: "password is required"})
-})
+  fullName: z.string().min(1).max(30).describe("user's name"),
+  email: z.email().describe("user's email"),
+  password: z.string().min(8).max(30).describe("user's password"),
+});
 
 const createUserWithEmailPassWordOutput = z.object({
-    id: z.string().describe("id of user created")
-})
+  id: z.string().describe("id of user created"),
+  token: z.string().describe("user's auth token"),
+});
 
 const loginUserWithEmailAndPassWordInput = z.object({
-    email: z.email().describe("user's email"),
-    password: z.string().describe("user's password")
-})
+  email: z.email().describe("user's email"),
+  password: z.string().describe("user's password"),
+});
 
 const loginUserWithEmailAndPassWordOutput = z.object({
-    id: z.string().describe("id of user created")
-})
+  id: z.string().describe("id of user"),
+  token: z.string().describe("user's auth token"),
+});
 
-const getMeInput = z.object({
-    token: z.string().describe("user's token")
-})
+const getMeInput = z.undefined().describe("no input required");
 
 const getMeOutput = z.object({
-    id: z.string().describe("user's id"),
-    fullName: z.string().describe("user's full name"),
-    email: z.string().describe("user's email")
-})
+  id: z.string().describe("user's id"),
+  fullName: z.string().describe("user's full name"),
+  email: z.string().describe("user's email"),
+});
 
-export{
-    createUserWithEmailAndPasswordInput,
-    createUserWithEmailPassWordOutput,
-    loginUserWithEmailAndPassWordInput,
-    loginUserWithEmailAndPassWordOutput,
-    getMeInput,
-    getMeOutput
-}
+const logoutOutput = z.object({
+  success: z.boolean().describe("whether the user was signed out"),
+});
+
+export {
+  createUserWithEmailAndPasswordInput,
+  createUserWithEmailPassWordOutput,
+  loginUserWithEmailAndPassWordInput,
+  loginUserWithEmailAndPassWordOutput,
+  getMeInput,
+  getMeOutput,
+  logoutOutput,
+};

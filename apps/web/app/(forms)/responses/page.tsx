@@ -1,6 +1,6 @@
 "use client";
 
-import { FormsTable } from "~/components/Table"
+import { FormsTable } from "~/components/Table";
 
 export default function ResponsesPage() {
   return (
@@ -8,7 +8,7 @@ export default function ResponsesPage() {
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Form Responses</h1>
         <p className="text-muted-foreground text-sm mt-1">
-          View and manage all your form submissions.
+          Open a form to view the responses it has collected.
         </p>
       </div>
 
@@ -16,5 +16,5 @@ export default function ResponsesPage() {
         <FormsTable showLive={false} />
       </wired-card>
     </div>
-  )
+  );
 }

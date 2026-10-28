@@ -31,6 +31,20 @@ class UserService {
         return user;
     }
 
+    private hashPassword(password: string, salt: string) {
+        return crypto.scryptSync(password, salt, 64).toString("hex");
+    }
+
+    private verifyPassword(password: string, salt: string, hash: string) {
+        const candidate = Buffer.from(this.hashPassword(password, salt), "hex");
+        const expected = Buffer.from(hash, "hex");
+
+        return (
+            candidate.length === expected.length &&
+            crypto.timingSafeEqual(candidate, expected)
+        );
+    }
+
     private async generateUserToken(payload: UserTokenType){
         const {id} = await UserToken.parseAsync(payload)
         const token = JWT.sign({id}, env.JWT_SECRET!, {expiresIn: "1d"})
@@ -43,11 +57,11 @@ class UserService {
         const existingUser = await this.getUserByEmail(payload.email);
 
         if (existingUser) {
-            throw new Error("User already exists");
+            throw new Error("An account with this email already exists");
         }
 
         const salt = crypto.randomBytes(16).toString("hex")
-        const hashedPassword = crypto.createHash("sha256").update(password + salt).digest("hex")
+        const hashedPassword = this.hashPassword(password, salt)
 
         const [userInsertResult] = await db.insert(usersTable).values({
             fullName,
@@ -74,14 +88,21 @@ class UserService {
         const existingUser = await this.getUserByEmail(payload.email);
 
         if(!existingUser){
-            throw new Error("User doesn't exist")
+            throw new Error("Incorrect email or password")
         }
 
-        const passwordHash = crypto.createHash("sha256").update(payload.password + existingUser.salt).digest("hex")
-        const isMatch = passwordHash === existingUser.password
+        if (!existingUser.salt || !existingUser.password) {
+            throw new Error("Invalid account credentials")
+        }
+
+        const isMatch = this.verifyPassword(
+            payload.password,
+            existingUser.salt,
+            existingUser.password,
+        )
         
         if(!isMatch){
-            throw new Error("password doensn't match")
+            throw new Error("Incorrect email or password")
         }
 
         const {token} = await this.generateUserToken({id: existingUser.id})

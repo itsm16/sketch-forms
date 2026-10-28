@@ -1,9 +1,8 @@
 "use client";
 
 import Canvas from "~/components/canvas/canvas";
-import WrapperDiv from "~/components/canvas/wrapper-div";
 import { useCanvasStore, getInsideFormContainer, type DataItem } from "~/store/canvasStore";
-import "wired-elements";
+import { useWiredElements } from "~/hooks/use-wired-elements";
 
 function labelFromFieldName(name: string): string {
   return name
@@ -72,6 +71,7 @@ const initialData: DataItem[] = [
 ];
 
 export default function DemoSection() {
+  useWiredElements();
   const allData = useCanvasStore((s) => s.data);
   const previewItems = getInsideFormContainer(allData);
 

@@ -4,15 +4,6 @@ import "./globals.css";
 import { GlobalProviders } from "~/providers/global";
 import { Toaster } from "~/components/ui/sonner";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-});
-
 const virgil = localFont({
   src: "./fonts/Virgil.woff2",
   variable: "--font-virgil",
@@ -20,7 +11,7 @@ const virgil = localFont({
 
 export const metadata: Metadata = {
   title: "SketchForms",
-  description: "Media Forwarding",
+  description: "Sketch a form, share a link, and collect responses.",
 };
 
 export default function RootLayout({
@@ -30,11 +21,13 @@ export default function RootLayout({
 }>) {
 
   return (
-    <html lang="en" className="dark">
+    <html lang="en" suppressHydrationWarning>
       <body className={virgil.className}>
-        <GlobalProviders>{children}</GlobalProviders>
+        <GlobalProviders>
+          {children}
+          <Toaster />
+        </GlobalProviders>
       </body>
-      <Toaster />
     </html>
   );
 }

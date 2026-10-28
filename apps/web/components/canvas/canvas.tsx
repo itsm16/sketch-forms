@@ -13,9 +13,10 @@ interface CanvasProps {
   initialData?: DataItem[];
   disableZoom?: boolean;
   nav?: boolean;
+  onSave?: (data: DataItem[]) => void;
 }
 
-function Canvas({ initialData = [], disableZoom = false, nav = true }: CanvasProps) {
+function Canvas({ initialData = [], disableZoom = false, nav = true, onSave }: CanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [viewport, setViewport] = useState({ x: 0, y: 0, zoom: 1 });
@@ -40,7 +41,7 @@ function Canvas({ initialData = [], disableZoom = false, nav = true }: CanvasPro
   const inputContainerRef = useRef<HTMLInputElement>(null);
 
   // zustand tools
-  const { tool, setTool } = useToolStore(state => state)
+  const { tool } = useToolStore(state => state)
   const { setCanvasCtx, setData: setStoreData } = useCanvasStore()
 
   const [data, setData] = useState<DataItem[]>(initialData);
@@ -136,8 +137,8 @@ function Canvas({ initialData = [], disableZoom = false, nav = true }: CanvasPro
     const rc = rough.canvas(canvas);
 
     data.forEach((item) => {
-      let seed = 10;
-      let roughness = 1.5;
+      const seed = 10;
+      const roughness = 1.5;
       if (item.shape === 'rectangle') {
         if (item.type === 'input-container') {
           ctx.strokeStyle = '#4F72FC';
@@ -312,7 +313,7 @@ function Canvas({ initialData = [], disableZoom = false, nav = true }: CanvasPro
     }
 
     ctx.restore();
-  }, [viewport, data, selectedId, isDrawingRect, rectStart, rectCurrent, hoveredId])
+  }, [viewport, data, selectedId, isDrawingRect, rectStart, rectCurrent, hoveredId, setCanvasCtx, tool])
 
   useEffect(() => {
     setStoreData(data);
@@ -329,7 +330,14 @@ function Canvas({ initialData = [], disableZoom = false, nav = true }: CanvasPro
       canvas.height = height;
 
       const loadAndDraw = async () => {
-        await document.fonts.load(`20px ${virgilFont.style.fontFamily}`);
+        const primaryFamily = virgilFont.style.fontFamily.split(",")[0]?.trim();
+        try {
+          if (primaryFamily) {
+            await document.fonts.load(`20px ${primaryFamily}`);
+          }
+        } catch {
+          // Font loading must never block the canvas from drawing.
+        }
         draw();
       };
       loadAndDraw();
@@ -377,7 +385,6 @@ function Canvas({ initialData = [], disableZoom = false, nav = true }: CanvasPro
       const container = containerRef.current;
       if (!container) return;
       const { x: canvasX, y: canvasY } = screenToCanvas(e.clientX, e.clientY);
-      const rect = container.getBoundingClientRect();
       setTextCanvasPosition({ x: canvasX, y: canvasY });
       const inputLeft = viewport.x + canvasX * viewport.zoom;
       const inputTop = viewport.y + canvasY * viewport.zoom;
@@ -570,7 +577,6 @@ function Canvas({ initialData = [], disableZoom = false, nav = true }: CanvasPro
       return;
     }
     
-    const rect = container.getBoundingClientRect();
     setTextCanvasPosition({ x: canvasX , y: canvasY });
     const inputLeft = viewport.x + canvasX * viewport.zoom;
     const inputTop = viewport.y + canvasY * viewport.zoom;
@@ -585,7 +591,7 @@ function Canvas({ initialData = [], disableZoom = false, nav = true }: CanvasPro
 
   return (
     <div ref={containerRef} className='relative h-full w-full'>
-      {nav && <Nav/>}
+      {nav && <Nav onSave={() => onSave?.(data)} />}
       <canvas ref={canvasRef} id="canvas" className="bg-white h-full w-full"
       onWheel={handleWheel}
       onMouseDown={onMouseDown}

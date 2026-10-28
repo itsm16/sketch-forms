@@ -1,6 +1,9 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 export default function HeroSection() {
+  const router = useRouter();
   return (
     <section className="min-h-[70vh] flex items-start justify-center px-6 pt-0 md:pt-17 relative">
       <div
@@ -35,11 +38,7 @@ export default function HeroSection() {
           <wired-button
             className="primary rotate-[-2deg]"
             elevation={3}
-            onClick={() =>
-              document
-                .getElementById("how-it-works")
-                ?.scrollIntoView({ behavior: "smooth" })
-            }
+            onClick={() => router.push("/new")}
           >
             Start Drawing
           </wired-button>

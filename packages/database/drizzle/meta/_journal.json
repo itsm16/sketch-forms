@@ -19,8 +19,15 @@
     {
       "idx": 2,
       "version": "7",
-      "when": 1780146373046,
-      "tag": "0002_green_blonde_phantom",
+      "when": 1793168613371,
+      "tag": "0002_closed_ezekiel",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793189108703,
+      "tag": "0003_early_energizer",
       "breakpoints": true
     }
   ]

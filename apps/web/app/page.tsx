@@ -1,13 +1,14 @@
 "use client";
 
-import "wired-elements";
 import HeroSection from "~/components/hero-section";
 import HowItWorksSection from "~/components/how-it-works-section";
 import DemoSection from "~/components/demo-section";
 import WhySection from "~/components/why-section";
 import CTASection from "~/components/cta-section";
+import { useWiredElements } from "~/hooks/use-wired-elements";
 
 export default function Home() {
+  useWiredElements();
   return (
     <main className="min-h-screen paper-bg text-slate-800 overflow-hidden relative">
       <style>{`

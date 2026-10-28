@@ -7,8 +7,9 @@ import { formsRouter } from "./routes/forms/route";
 export const serverRouter = router({
   health: healthRouter,
   auth: authRouter,
-  form: formsRouter
+  form: formsRouter,
 });
 
-export { createContext } from "./context";
+export { createContext, createFetchContext } from "./context";
+export type { TRPCContext } from "./context";
 export type ServerRouter = typeof serverRouter;

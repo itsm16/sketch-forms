@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 export type DataItem = {
   id: number;
-  shape: 'rectangle' | 'circle' | 'text' | 'line';
+  shape: "rectangle" | "circle" | "text" | "line";
   type?: string;
   x: number;
   y: number;
@@ -24,24 +24,47 @@ type CanvasState = {
   setCanvasCtx: (ctx: CanvasRenderingContext2D) => void;
   data: DataItem[];
   setData: (data: DataItem[]) => void;
+};
+
+export function getCanvasData(canvasJson: unknown): DataItem[] {
+  if (Array.isArray(canvasJson)) return canvasJson as DataItem[];
+  if (
+    canvasJson &&
+    typeof canvasJson === "object" &&
+    Array.isArray((canvasJson as { data?: unknown }).data)
+  ) {
+    return (canvasJson as { data: DataItem[] }).data;
+  }
+  return [];
 }
 
 export const getInsideFormContainer = (data: DataItem[]): DataItem[] => {
-  const formContainer = data.find(d => d.type === 'form-container');
-  if (!formContainer || !formContainer.width || !formContainer.height) return [];
+  const formContainer = data.find((d) => d.type === "form-container");
+
+  if (!formContainer || !formContainer.width || !formContainer.height) {
+    return data.filter((d) => d.type !== "form-container");
+  }
+
   const { x: cx, y: cy, width: cw, height: ch } = formContainer;
-  return data.filter(d =>
-    d.id !== formContainer.id &&
-    d.x >= cx && d.x <= cx + cw &&
-    d.y >= cy && d.y <= cy + ch
+  return data.filter(
+    (d) =>
+      d.id !== formContainer.id &&
+      d.x >= cx &&
+      d.x <= cx + cw &&
+      d.y >= cy &&
+      d.y <= cy + ch,
   );
 };
 
 export const useCanvasStore = create<CanvasState>((set) => ({
-   canvasCtx : null,
-   setCanvasCtx : (ctx: CanvasRenderingContext2D) => set({ canvasCtx: ctx }),
-   data : [],
-   setData : (data: DataItem[]) => set({
-     data: [...data.filter(d => d.type !== 'button'), ...data.filter(d => d.type === 'button')],
-   }),
+  canvasCtx: null,
+  setCanvasCtx: (ctx: CanvasRenderingContext2D) => set({ canvasCtx: ctx }),
+  data: [],
+  setData: (data: DataItem[]) =>
+    set({
+      data: [
+        ...data.filter((d) => d.type !== "button"),
+        ...data.filter((d) => d.type === "button"),
+      ],
+    }),
 }));

@@ -1,15 +1,12 @@
-import { TfiLayoutLineSolid } from "react-icons/tfi";
-import { PiCursorLight, PiCursorFill, PiCircleFill, PiCircleLight, PiPenFill, PiPenLight, PiArrowBendRightDownLight, PiArrowBendRightDownFill, PiTextAaLight, PiTextAaFill, PiTextboxLight, PiTextboxFill, PiTrashLight, PiTrashFill } from "react-icons/pi";
+import { PiCursorLight, PiCursorFill, PiArrowBendRightDownLight, PiArrowBendRightDownFill, PiTextAaLight, PiTextAaFill, PiTextboxLight, PiTextboxFill, PiTrashLight, PiTrashFill } from "react-icons/pi";
 import { BsTextareaT, BsTextareaResize } from "react-icons/bs";
 import { BiJoystickButton } from "react-icons/bi";
 import useToolStore from '~/store/toolStore';
-import { useCanvasStore, getInsideFormContainer } from '~/store/canvasStore';
 import WrapperDiv from './wrapper-div';
 import { RoughNotation } from 'react-rough-notation';
 
-export default function Nav() {
+export default function Nav({ onSave }: { onSave?: () => void }) {
     const { tool, setTool } = useToolStore<{ tool: string, setTool: (tool: string) => void }>(state => state)
-    const { canvasCtx, data } = useCanvasStore()
 
     return (
         <nav className='flex w-full justify-center items-center my-4 absolute z-10'>
@@ -24,9 +21,7 @@ export default function Nav() {
                 <button title="text" className={`h-9 w-9 flex items-center justify-center rounded-lg ${tool === "text" ? "bg-white text-black" : "text-white hover:bg-white/10"}`} onClick={() => setTool("text")}>{tool === "text" ? <PiTextAaFill size={20} /> : <PiTextAaLight size={20} />}</button>
                 <button title="delete" className={`h-9 w-9 flex items-center justify-center rounded-lg ${tool === "delete" ? "bg-white text-black" : "text-white hover:bg-white/10"}`} onClick={() => setTool("delete")}>{tool === "delete" ? <PiTrashFill size={20} /> : <PiTrashLight size={20} />}</button>
             </WrapperDiv>
-            <button className='absolute right-10 text-white text-xl' onClick={() => {
-              console.log({ canvasCtx, data: getInsideFormContainer(data) });
-            }}>
+            <button className='absolute right-10 text-white text-xl' onClick={onSave}>
                 <RoughNotation type="box" show={true} color="#FF8787" strokeWidth={3} padding={[10, 20]}>
                     Save
                 </RoughNotation>
